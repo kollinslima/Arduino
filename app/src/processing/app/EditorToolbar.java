@@ -17,7 +17,7 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
+  along with this program; if not, write to the Free Software Foundation,Inc
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -41,14 +41,14 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
    * Rollover titles for each button.
    */
   private static final String[] title = {
-    tr("Verify"), tr("Upload"), tr("New"), tr("Open"), tr("Save"), tr("Serial Monitor")
+    tr("Android"),tr("Verify"), tr("Upload"), tr("New"), tr("Open"), tr("Save"), tr("Serial Monitor")
   };
 
   /**
    * Titles for each button when the shift key is pressed.
    */
   private static final String[] titleShift = {
-    tr("Verify"), tr("Upload Using Programmer"), tr("New"), tr("Open"), tr("Save As..."), tr("Serial Monitor")
+    tr("Android"),tr("Verify"), tr("Upload Using Programmer"), tr("New"), tr("Open"), tr("Save As..."), tr("Serial Monitor")
   };
 
   private static final int BUTTON_COUNT = title.length;
@@ -69,7 +69,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
    */
   private static final int BUTTON_IMAGE_SIZE = scale(33);
 
-
+/*
   private static final int RUN = 0;
   private static final int EXPORT = 1;
 
@@ -78,6 +78,17 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
   private static final int SAVE = 4;
 
   private static final int SERIAL = 5;
+*/
+
+  private static final int ANDROID = 0;
+  private static final int RUN = 1;
+  private static final int EXPORT = 2;
+
+  private static final int NEW = 3;
+  private static final int OPEN = 4;
+  private static final int SAVE = 5;
+
+  private static final int SERIAL = 6;
 
   private static final int INACTIVE = 0;
   private static final int ROLLOVER = 1;
@@ -120,12 +131,14 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     which = new int[BUTTON_COUNT];
 
     //which[buttonCount++] = NOTHING;
+    which[buttonCount++] = ANDROID;
     which[buttonCount++] = RUN;
     which[buttonCount++] = EXPORT;
     which[buttonCount++] = NEW;
     which[buttonCount++] = OPEN;
     which[buttonCount++] = SAVE;
     which[buttonCount++] = SERIAL;
+//    which[buttonCount++] = ANDROID;
 
     currentRollover = -1;
 
@@ -196,6 +209,9 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
       // Serial button must be on the right
       x1[SERIAL] = width - BUTTON_WIDTH - 14;
       x2[SERIAL] = width - 14;
+
+//      x1[ANDROID] = width - BUTTON_WIDTH - 14;
+//      x2[ANDROID] = width - 14
     }
     Graphics2D g = Theme.setupGraphics2D(offscreen.getGraphics());
     g.setColor(bgcolor); //getBackground());
@@ -340,6 +356,11 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     currentRollover = -1;
 
     switch (sel) {
+
+      //TRATAR BOTAO ANDROID AQUI
+        case ANDROID:
+            break;
+
       case RUN:
         if (!editor.avoidMultipleOperations) {
           editor.handleRun(false, editor.presentHandler, editor.runHandler);
