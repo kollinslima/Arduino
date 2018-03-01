@@ -1705,6 +1705,40 @@ public class Editor extends JFrame implements RunnerListener {
 
 
   /**
+   * Implements Android Button.
+   * @param verbose Set true to run with verbose output.
+   * @param verboseHandler
+   * @param nonVerboseHandler
+   */
+  public void handleAndroid(final boolean verbose, Runnable verboseHandler, Runnable nonVerboseHandler) {
+    handleAndroid(verbose, new ShouldSaveIfModified(), verboseHandler, nonVerboseHandler);
+  }
+
+  private void handleAndroid(final boolean verbose, Predicate<SketchController> shouldSavePredicate, Runnable verboseHandler, Runnable nonVerboseHandler) {
+    if (shouldSavePredicate.test(sketchController)) {
+      handleSave(true);
+    }
+    toolbar.activateAndroid();
+    status.progress(tr("Compiling sketch..."));
+
+    // do this to advance/clear the terminal window / dos prompt / etc
+    for (int i = 0; i < 10; i++) System.out.println();
+
+    // clear the console on each run, unless the user doesn't want to
+    if (PreferencesData.getBoolean("console.auto_clear")) {
+      console.clear();
+    }
+
+    // Cannot use invokeLater() here, otherwise it gets
+    // placed on the event thread and causes a hang--bad idea all around.
+    new Thread(verbose ? verboseHandler : nonVerboseHandler).start();
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
    * Implements Sketch &rarr; Run.
    * @param verbose Set true to run with verbose output.
    * @param verboseHandler
@@ -1769,6 +1803,7 @@ public class Editor extends JFrame implements RunnerListener {
 
       status.unprogress();
       toolbar.deactivateRun();
+      toolbar.deactivateAndroid();
       avoidMultipleOperations = false;
     }
   }

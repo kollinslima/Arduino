@@ -357,9 +357,14 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
     switch (sel) {
 
-      //TRATAR BOTAO ANDROID AQUI
-        case ANDROID:
-            break;
+      case ANDROID:
+
+        //Repeat RUN Action
+        if (!editor.avoidMultipleOperations) {
+           editor.handleAndroid(false, editor.presentHandler, editor.runHandler);
+           editor.avoidMultipleOperations = true;
+        }
+        break;
 
       case RUN:
         if (!editor.avoidMultipleOperations) {
@@ -427,6 +432,10 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     }
   }
 
+  public void activateAndroid(){
+      activate(ANDROID);
+  }
+
   public void activateRun() {
     activate(RUN);
   }
@@ -446,6 +455,10 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     if (buttonImages != null) {
       setState(what, INACTIVE, true);
     }
+  }
+
+  public void deactivateAndroid(){
+      deactivate(ANDROID);
   }
 
   public void deactivateRun() {
