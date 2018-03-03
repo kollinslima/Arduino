@@ -92,7 +92,7 @@ public class Editor extends JFrame implements RunnerListener {
   
   //Android attributes
   private boolean isAndroid;
-  private DeviceSelector androidSelector = new DeviceSelector();
+  private DeviceSelector androidSelector;
 
   private static class ShouldSaveIfModified
       implements Predicate<SketchController> {
@@ -346,6 +346,8 @@ public class Editor extends JFrame implements RunnerListener {
     // Open the document that was passed in
     boolean loaded = handleOpenInternal(file);
     if (!loaded) sketchController = null;
+
+    androidSelector = new DeviceSelector(sketch.getBuildPath().toPath());
   }
 
 
@@ -1805,6 +1807,7 @@ public class Editor extends JFrame implements RunnerListener {
 
         if(isAndroid){
             androidSelector.choose();
+//            System.out.println(sketch.getBuildPath().toPath());
         }
 
       } catch (PreferencesMapException e) {

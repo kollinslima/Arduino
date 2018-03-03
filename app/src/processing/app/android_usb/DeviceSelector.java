@@ -24,10 +24,10 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
 
     private DeviceWatcher watcher;
 
-    public DeviceSelector() {
+    public DeviceSelector(Path buildPath) {
         super("Select Device");
 
-        this.handler = new USBManager();
+        this.handler = new USBManager(buildPath);
         watcher = new DeviceWatcher(this, handler);
 
         setUpFrame();

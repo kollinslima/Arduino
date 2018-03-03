@@ -27,9 +27,12 @@ public class USBManager implements USBHandler {
     private ArrayList<String> rawDevices;
     private ArrayList<String> friendlyDevices;
 
-    public USBManager(){
+    private Path buildPath;
+
+    public USBManager(Path buildPath){
         rawDevices = new ArrayList<String>();
         friendlyDevices = new ArrayList<String>();
+        this.buildPath = buildPath;
     }
 
     @Override
@@ -201,52 +204,62 @@ public class USBManager implements USBHandler {
     }
 
     private File getHexFile(){
-        if (System.getProperty("os.name").toLowerCase().contains("windows")){
-            return getHexFileWindows();
-        }
-        else {
-            return getHexFileLinux();
-        }
-    }
 
-    private File getHexFileWindows(){
-        return null;
-    }
-
-    private File getHexFileLinux(){
-
-        File hexFile;
-
-        File tmpDirectories = new File("/tmp");
-        File[] listTmpDirectories = tmpDirectories.listFiles();
-
-        ArrayList<File> arduinoDir = new ArrayList<File>();
-
-        //Find all arduino_build directories
-        for (File file : listTmpDirectories){
-            if (file.isDirectory() && file.toString().contains("arduino_build")){
-                arduinoDir.add(file);
-            }
-        }
-
-        //Find most recent modified arduino_build directory
-        File recentModifiedDir = arduinoDir.get(0);
-        for (int i = 1; i < arduinoDir.size(); i++){
-            if (arduinoDir.get(i).lastModified() > recentModifiedDir.lastModified()){
-                recentModifiedDir = arduinoDir.get(i);
-            }
-        }
-
-        //Get hexFile
-        File[] listFilesRecentDir = recentModifiedDir.listFiles();
-        for (File file : listFilesRecentDir){
+        File buildFiles = new File(buildPath.toString());
+        File[] listBuildFiles = buildFiles.listFiles();
+        for (File file : listBuildFiles){
             if (file.isFile() && file.toString().contains("ino.hex")){
                 return file;
             }
         }
-
         return null;
-
+//        if (System.getProperty("os.name").toLowerCase().contains("windows")){
+//            return getHexFileWindows();
+//        }
+//        else {
+//            return getHexFileLinux();
+//        }
     }
+
+//    private File getHexFileWindows(){
+//        return null;
+//    }
+//
+//    private File getHexFileLinux(){
+//
+////        File hexFile;
+////
+////        File tmpDirectories = new File("/tmp");
+////        File[] listTmpDirectories = tmpDirectories.listFiles();
+////
+////        ArrayList<File> arduinoDir = new ArrayList<File>();
+////
+////        //Find all arduino_build directories
+////        for (File file : listTmpDirectories){
+////            if (file.isDirectory() && file.toString().contains("arduino_build")){
+////                arduinoDir.add(file);
+////            }
+////        }
+////
+////        //Find most recent modified arduino_build directory
+////        File recentModifiedDir = arduinoDir.get(0);
+////        for (int i = 1; i < arduinoDir.size(); i++){
+////            if (arduinoDir.get(i).lastModified() > recentModifiedDir.lastModified()){
+////                recentModifiedDir = arduinoDir.get(i);
+////            }
+////        }
+//
+//        //Get hexFile
+//        File buildFiles = new File(buildPath.toString());
+//        File[] listBuildFiles = buildFiles.listFiles();
+//        for (File file : listBuildFiles){
+//            if (file.isFile() && file.toString().contains("ino.hex")){
+//                return file;
+//            }
+//        }
+//
+//        return null;
+//
+//    }
 
 }
