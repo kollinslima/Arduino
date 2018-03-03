@@ -149,6 +149,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
     addMouseListener(this);
     addMouseMotionListener(this);
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+
   }
 
   private void loadButtons() {
@@ -359,11 +360,12 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
 
       case ANDROID:
 
-        //Repeat RUN Action
+        //Repeat RUN Action        
         if (!editor.avoidMultipleOperations) {
            editor.handleAndroid(false, editor.presentHandler, editor.runHandler);
            editor.avoidMultipleOperations = true;
         }
+        
         break;
 
       case RUN:

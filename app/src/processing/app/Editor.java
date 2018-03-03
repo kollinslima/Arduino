@@ -72,6 +72,9 @@ import java.util.ArrayList;
 import static processing.app.I18n.tr;
 import static processing.app.Theme.scale;
 
+//Android USB Selector
+import android_usb.DeviceSelector;
+
 /**
  * Main editor panel for the Processing Development Environment.
  */
@@ -86,6 +89,10 @@ public class Editor extends JFrame implements RunnerListener {
   private final Box upper;
   private ArrayList<EditorTab> tabs = new ArrayList<>();
   private int currentTabIndex = -1;
+  
+  //Android attributes
+  private boolean isAndroid;
+  private DeviceSelector androidSelector = new DeviceSelector();
 
   private static class ShouldSaveIfModified
       implements Predicate<SketchController> {
@@ -1711,6 +1718,7 @@ public class Editor extends JFrame implements RunnerListener {
    * @param nonVerboseHandler
    */
   public void handleAndroid(final boolean verbose, Runnable verboseHandler, Runnable nonVerboseHandler) {
+    isAndroid = true;
     handleAndroid(verbose, new ShouldSaveIfModified(), verboseHandler, nonVerboseHandler);
   }
 
@@ -1732,6 +1740,7 @@ public class Editor extends JFrame implements RunnerListener {
     // Cannot use invokeLater() here, otherwise it gets
     // placed on the event thread and causes a hang--bad idea all around.
     new Thread(verbose ? verboseHandler : nonVerboseHandler).start();
+    
   }
 
 
@@ -1745,6 +1754,7 @@ public class Editor extends JFrame implements RunnerListener {
    * @param nonVerboseHandler
    */
   public void handleRun(final boolean verbose, Runnable verboseHandler, Runnable nonVerboseHandler) {
+    isAndroid = false;
     handleRun(verbose, new ShouldSaveIfModified(), verboseHandler, nonVerboseHandler);
   }
 
@@ -1792,6 +1802,11 @@ public class Editor extends JFrame implements RunnerListener {
         removeAllLineHighlights();
         sketchController.build(verbose, saveHex);
         statusNotice(tr("Done compiling."));
+
+        if(isAndroid){
+            androidSelector.choose();
+        }
+
       } catch (PreferencesMapException e) {
         statusError(I18n.format(
                 tr("Error while compiling: missing '{0}' configuration parameter"),
