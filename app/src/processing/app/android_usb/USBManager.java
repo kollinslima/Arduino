@@ -18,7 +18,7 @@ public class USBManager implements USBHandler {
     //Private files won't work
 //    private final Path ANDROID_PATH = Paths.get("Android/data/" + ANDROID_PACKAGE_NAME + "/files");
 
-    private final Path ANDROID_PATH = Paths.get("DCIM/" + ANDROID_PACKAGE_NAME + "/ArduinoCode/");
+    private final Path ANDROID_PATH = Paths.get("DCIM/" + ANDROID_PACKAGE_NAME + "/");
 
     private final String LINUX_MTP_PATH = "XDG_RUNTIME_DIR";
     private final String GVFS_DIR = "/gvfs/";
@@ -65,7 +65,7 @@ public class USBManager implements USBHandler {
 
         for (File file : listDirDevices){
             if (file.isDirectory()){
-                System.out.println(file.getName());
+                //System.out.println(file.getName());
                 rawDevices.add(file.getName());
             }
         }
@@ -80,8 +80,8 @@ public class USBManager implements USBHandler {
                 bus = split.substring(0, 3);
                 device = split.substring(split.length() - 3, split.length());
 
-                System.out.println("Bus: " + bus);
-                System.out.println("Device: " + device);
+                //System.out.println("Bus: " + bus);
+                //System.out.println("Device: " + device);
             }
 
             //Try to get friendly name
@@ -131,14 +131,14 @@ public class USBManager implements USBHandler {
             ArrayList<String> response = new ArrayList<String>();
             response.clear();
             while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
+                //System.out.println(s);
                 response.add(s);
 
             }
 
             // read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
+                //System.out.println(s);
                 return null;    //Return null on error
             }
 
@@ -156,7 +156,7 @@ public class USBManager implements USBHandler {
         //Get directory of selected device
         Path devicePath = Paths.get(pathToDevices + "/" +
                 rawDevices.get(friendlyDevices.indexOf(friendlyDevice)));
-        System.out.println(devicePath.toString());
+        //System.out.println(devicePath.toString());
 
         //Find hexFile in system
         File hexFile = getHexFile();
@@ -168,7 +168,9 @@ public class USBManager implements USBHandler {
         hexFile.mkdirs();
         Path sourcePath = hexFile.toPath();
 
+        System.out.println("Copying...");
         System.out.println("Source: " + sourcePath);
+        System.out.println("Target: " + friendlyDevice);
 
         //Find target directory
         File directories = new File(devicePath.toString());
@@ -182,7 +184,7 @@ public class USBManager implements USBHandler {
                 targetFile.mkdirs();
 
                 String targetPath = targetFile.toString().concat("/code.hex");
-                System.out.println("Target: " + targetPath);
+                //System.out.println("Target: " + targetPath);
 
                 //Alguns dispositivos MTP não aceitam manipulação direta, por isso
                 //usar comando externo gio copy.
@@ -197,6 +199,9 @@ public class USBManager implements USBHandler {
 
                 if(runExternal(gioCopyCommand) == null){
                     System.out.println("Copy fail");
+                }
+                else{
+                    System.out.println("Done");
                 }
             }
         }

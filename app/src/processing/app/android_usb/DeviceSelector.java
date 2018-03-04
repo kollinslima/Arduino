@@ -37,14 +37,18 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
 
     public void choose() {
 
-        selectedDevice = null;
+        if(defaultDevice != null){
+            handler.copyHexToDevice(defaultDevice);
+        }
+        else{
+            selectedDevice = null;
 
-        this.setVisible(true);
+            this.setVisible(true);
 
-        loadList();
+            loadList();
 
-        new Thread(watcher).start();
-
+            new Thread(watcher).start();
+        }
     }
 
     public synchronized void loadList(){
@@ -121,7 +125,7 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
     public void valueChanged(ListSelectionEvent e) {
         if (selectedDevice == null || (!selectedDevice.equals(deviceList.getSelectedValue()))){
             selectedDevice = deviceList.getSelectedValue();
-            System.out.println("Device selected: " + deviceList.getSelectedValue());
+            //System.out.println("Device selected: " + deviceList.getSelectedValue());
         }
 
     }
@@ -130,38 +134,29 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        System.out.println(command);
+        //System.out.println(command);
 
         if (command.equals("CANCEL")){
             selectedDevice = null;
-            System.out.println("Nothing Choosed");
+            //System.out.println("Nothing Choosed");
 
             //Close JFrame
             closeFrame();
         }
         else if (command.equals("OK")){
 
-            if (defaultDevice != null){
-                System.out.println("Return default device: " + defaultDevice);
-                handler.copyHexToDevice(defaultDevice);
-
-                //Close JFrame
-                closeFrame();
-            }
-            else if (selectedDevice != null) {
+            if (selectedDevice != null) {
                 if (setDefaultDevice.isSelected()) {
-                    System.out.println("Choose: " + selectedDevice + " and set as default");
                     defaultDevice = selectedDevice;
-                    handler.copyHexToDevice(selectedDevice);
-                } else {
-                    handler.copyHexToDevice(selectedDevice);
                 }
+
+                handler.copyHexToDevice(selectedDevice);               
 
                 //Close JFrame
                 closeFrame();
             }
             else {
-                System.out.println("Nothing selected");
+                System.out.println("Select a device");
             }
 
         }
