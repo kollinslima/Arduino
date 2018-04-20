@@ -111,12 +111,13 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
         this.add(bottomPanel,BorderLayout.AFTER_LAST_LINE);
 
         this.pack();
-        this.setMinimumSize(new Dimension(250, 250));
-        this.setExtendedState(JFrame.NORMAL);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setMinimumSize(new Dimension(dim.width/2, dim.height/2));
+        this.setExtendedState(JFrame.NORMAL);
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
+    
         this.addWindowListener(this);
     }
 
