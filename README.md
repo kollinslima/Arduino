@@ -1,5 +1,12 @@
+
+__This is a modified version of Arduino IDE, developed to be used with [SOFIA](https://github.com/kollinslima/ArduinoSimulator) simulator. You can get the official version of Arduino IDE [here](https://github.com/arduino/Arduino).__
+
+Modifications by: Kollins Gabriel Lima (kollins.lima@gmail.com) - 2018
+
+
+
 Arduino
-========
+===========
 
 * Arduino is an open-source physical computing platform based on a simple I/O
 board and a development environment that implements the Processing/Wiring
