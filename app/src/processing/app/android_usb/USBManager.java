@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class USBManager implements USBHandler {
 
-    private final String ANDROID_PACKAGE_NAME = "ArduinoSimulator";
+    private final String ANDROID_PACKAGE_NAME = "SOFIA";
 
     //Private files won't work
 //    private final Path ANDROID_PATH = Paths.get("Android/data/" + ANDROID_PACKAGE_NAME + "/files");
@@ -198,7 +198,19 @@ public class USBManager implements USBHandler {
                 gioCopyCommand.add(targetPath.toString());
 
                 if(runExternal(gioCopyCommand) == null){
-                    System.out.println("Copy fail");
+
+		    //Try with gvfs-copy
+		    ArrayList<String> gvfsCopyCommand = new ArrayList<String>();
+        	    gvfsCopyCommand.add("gvfs-copy");
+                    gvfsCopyCommand.add(sourcePath.toString());
+	            gvfsCopyCommand.add(targetPath.toString());
+
+		    if(runExternal(gvfsCopyCommand) == null){
+                        System.out.println("Copy fail");
+                    }
+                    else{
+                        System.out.println("Done");
+                    }
                 }
                 else{
                     System.out.println("Done");
