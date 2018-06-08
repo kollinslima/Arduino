@@ -29,6 +29,7 @@ import jssc.SerialPortException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -182,7 +183,7 @@ public class Serial implements SerialPortEventListener {
             int copyNow = buf.length - next < spaceInIn ? buf.length - next : spaceInIn;
             inFromSerial.put(buf, next, copyNow);
             next += copyNow;
-            inFromSerial.flip();
+            ((Buffer)inFromSerial).flip();
             bytesToStrings.decode(inFromSerial, outToMessage, false);
             inFromSerial.compact();
           }
