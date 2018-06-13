@@ -17,6 +17,7 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
     private USBHandler handler;
     private String defaultDevice = null;
     private String selectedDevice = null;
+    private static String lastDevice = null;
     private JList<String> deviceList;
     private JPanel bottomPanel, buttonPanel;
     private JButton okButton, cancelButton;
@@ -49,6 +50,14 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
 
             new Thread(watcher).start();
         }
+    }
+
+    public USBHandler getUSBHandler(){
+        return handler;
+    }
+
+    public String getLastDevice(){
+        return lastDevice;
     }
 
     public synchronized void loadList(){
@@ -153,6 +162,8 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
 
                 handler.copyHexToDevice(selectedDevice);               
 
+                lastDevice = new String(selectedDevice);
+    
                 //Close JFrame
                 closeFrame();
             }

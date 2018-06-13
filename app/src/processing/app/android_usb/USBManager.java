@@ -1,8 +1,11 @@
 package android_usb;
 
+import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,12 +16,13 @@ import java.util.regex.Pattern;
 
 public class USBManager implements USBHandler {
 
-    private final String ANDROID_PACKAGE_NAME = "SOFIA";
+    public static final String ANDROID_PACKAGE_NAME = "SOFIA";
 
     //Private files won't work
 //    private final Path ANDROID_PATH = Paths.get("Android/data/" + ANDROID_PACKAGE_NAME + "/files");
 
     private final Path ANDROID_PATH = Paths.get("DCIM/" + ANDROID_PACKAGE_NAME + "/");
+    public static final Path ANDROID_PATH_SERIAL = Paths.get("DCIM/" + ANDROID_PACKAGE_NAME + "/Serial");
 
     private final String LINUX_MTP_PATH = "XDG_RUNTIME_DIR";
     private final String GVFS_DIR = "/gvfs/";
@@ -113,6 +117,10 @@ public class USBManager implements USBHandler {
     public synchronized String getDevicePath(){
         return pathToDevices;
     }
+    public Path getDevicePathForDevice(String device){
+        return Paths.get(pathToDevices + "/" +
+                rawDevices.get(friendlyDevices.indexOf(device)));
+    }
 
     private ArrayList<String> runExternal(ArrayList<String> args){
         try {
@@ -144,7 +152,7 @@ public class USBManager implements USBHandler {
 
             return response;
         } catch (IOException|InterruptedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return null;
@@ -215,6 +223,43 @@ public class USBManager implements USBHandler {
                 else{
                     System.out.println("Done");
                 }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public int sendSerialMessage(String friendlyDevice, String message) {
+
+        //Get directory of selected device
+        Path devicePath = Paths.get(pathToDevices + "/" +
+                rawDevices.get(friendlyDevices.indexOf(friendlyDevice)));
+        System.out.println(devicePath.toString());
+
+        //Find target directory
+        File directories = new File(devicePath.toString());
+        File[] listDirectories = directories.listFiles();
+
+        //System.out.println("Target: " + friendlyDevice);
+
+        //Copy to SDCard and MicroSD
+        for (File file : listDirectories){
+            if (file.isDirectory()){
+
+                File targetFile = new File(file.toString() + "/" + ANDROID_PATH_SERIAL);
+                targetFile.mkdirs();
+
+                String targetPath = targetFile.toString().concat("/sofia_receiver.txt");
+
+                PrintWriter writer = null;
+                try {
+                    writer = new PrintWriter(new FileOutputStream(new File(targetPath),true));
+                    writer.append(message);
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
         return 0;

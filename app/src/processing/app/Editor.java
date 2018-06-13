@@ -74,6 +74,7 @@ import static processing.app.Theme.scale;
 
 //Android USB Selector
 import android_usb.DeviceSelector;
+import android_usb.AndroidSerialMonitor;
 
 import processing.app.helpers.FileUtils;
 
@@ -2494,6 +2495,10 @@ public class Editor extends JFrame implements RunnerListener {
 
     } while (serialMonitor.requiresAuthorization() && !success);
 
+  }
+
+  public void handleAndroidSerial(){
+    new AndroidSerialMonitor(androidSelector.getLastDevice(), androidSelector.getUSBHandler());
   }
 
   public void handlePlotter() {
