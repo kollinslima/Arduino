@@ -38,7 +38,13 @@ public class USBManager implements USBHandler {
         friendlyDevices = new ArrayList<String>();
         this.buildPath = buildPath;
     }
-
+    
+    public USBManager(){
+        rawDevices = new ArrayList<String>();
+        friendlyDevices = new ArrayList<String>();
+        this.buildPath = null;
+    }
+    
     @Override
     public ArrayList<String> getDevices() {
 
@@ -51,6 +57,11 @@ public class USBManager implements USBHandler {
         else {
             return getDevicesLinux();
         }
+    }
+
+    @Override
+    public Path getBuildPath(){
+        return buildPath;
     }
 
     private ArrayList<String> getDevicesWindows(){

@@ -20,12 +20,27 @@ public class AndroidSerialMonitor extends JFrame implements ActionListener, Wind
     private JCheckBox autoscrollBox;
 
     private boolean stopObserver;
+    private DeviceSelector selector;
 
     public AndroidSerialMonitor(String lastDevice, USBHandler usbHandler) {
-        this.handler = usbHandler;
         this.lastDevice = lastDevice;
         stopObserver = false;
 
+        if (usbHandler == null){
+            this.handler = new USBManager();
+        } else {
+            this.handler = usbHandler;
+        }
+        
+        if (lastDevice == null){
+            selector = new DeviceSelector(this, handler);
+            selector.choose();
+       } else {
+            initMonitor();
+        }
+    }
+
+    private void initMonitor(){
         launchMonitor();
 
         Path devicePath = handler.getDevicePathForDevice(lastDevice);
@@ -42,7 +57,9 @@ public class AndroidSerialMonitor extends JFrame implements ActionListener, Wind
                 File targetFileTransmitter = new File(targetDir.toString().concat("/sofia_transmitter.txt"));
                 File targetFileReceiver = new File(targetDir.toString().concat("/sofia_receiver.txt"));
                 try {
-                    targetFileTransmitter.createNewFile();
+                    if (!targetFileTransmitter.exists())
+                        targetFileTransmitter.createNewFile();
+
                     targetFileReceiver.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -51,7 +68,6 @@ public class AndroidSerialMonitor extends JFrame implements ActionListener, Wind
             }
         }
     }
-
 
     private void launchMonitor() {
         ////////////////////Set up TextField///////////////////////////////
@@ -107,6 +123,16 @@ public class AndroidSerialMonitor extends JFrame implements ActionListener, Wind
             handler.sendSerialMessage(lastDevice, messageField.getText());
             messageField.setText("");
 
+        } else if (command.equals("OK")){
+            if (selector.getSelectedDevice() != null){
+                this.lastDevice = selector.getSelectedDevice();
+                selector.closeFrameFromOutside();
+                initMonitor();
+            } else {
+                System.out.println("Select a device");
+            }
+        } else if (command.equals("CANCEL")){
+            selector.closeFrameFromOutside();
         }
     }
 
@@ -148,12 +174,13 @@ public class AndroidSerialMonitor extends JFrame implements ActionListener, Wind
     private class ObserverDevice implements Runnable {
 
         private File observeFile;
-        private long fileSize;
+        private long fileSize, fileCount;
         private BufferedReader reader;
 
         public ObserverDevice(File observeFile) {
             this.observeFile = observeFile;
             fileSize = 0;
+            fileCount = 0;
         }
 
         @Override
@@ -162,14 +189,20 @@ public class AndroidSerialMonitor extends JFrame implements ActionListener, Wind
             try {
                 reader = new BufferedReader(new FileReader(observeFile));
                 while (!stopObserver) {
+                    System.out.println("File size: " + observeFile.length());
                     if (observeFile.length() != fileSize) {
+                        fileCount = fileSize;
                         fileSize = observeFile.length();
 
+                        if (fileSize < fileCount){
+                            fileCount = 0;
+                            messageList.setText("");
+                        }
+
                         try {
-                            //for (int i = 0; i < fileSize; i++) {
+                            while(fileCount++ < fileSize){
                                 messageList.append(String.valueOf((char) reader.read()));
-                            //}
-                            //messageList.append("\n");
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -186,7 +219,7 @@ public class AndroidSerialMonitor extends JFrame implements ActionListener, Wind
                 e.printStackTrace();
             }
 
-            System.out.println("Finish Thread.");
+            //System.out.println("Finish Thread.");
         }
     }
 }

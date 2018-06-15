@@ -413,7 +413,8 @@ public class EditorToolbar extends JComponent implements MouseInputListener, Key
         break;
 
       case ANDROID_SERIAL:
-        editor.handleAndroidSerial();
+        System.out.println("Comming soon...");
+        //editor.handleAndroidSerial();
         break;
 
       default:

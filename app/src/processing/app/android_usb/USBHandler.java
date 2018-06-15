@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public interface USBHandler {
     public ArrayList<String> getDevices();
+    public Path getBuildPath();
     public String getDevicePath();
     public Path getDevicePathForDevice(String device);
     public int copyHexToDevice(String friendlyDevice);

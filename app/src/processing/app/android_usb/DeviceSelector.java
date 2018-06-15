@@ -17,24 +17,39 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
     private USBHandler handler;
     private String defaultDevice = null;
     private String selectedDevice = null;
-    private static String lastDevice = null;
+    private String lastDevice = null;
     private JList<String> deviceList;
     private JPanel bottomPanel, buttonPanel;
     private JButton okButton, cancelButton;
     private JCheckBox setDefaultDevice;
 
+    private boolean serialSection;
+
     private DeviceWatcher watcher;
+    private AndroidSerialMonitor androidSerialMonitor;
 
     public DeviceSelector(Path buildPath) {
         super("Select Device");
 
         this.handler = new USBManager(buildPath);
         watcher = new DeviceWatcher(this, handler);
-
+        serialSection = false;
+        
         setUpFrame();
 
     }
+    
+    public DeviceSelector(AndroidSerialMonitor androidSerialMonitor, USBHandler handler){
+        super("Select Device");
 
+        this.handler = handler;
+        this.androidSerialMonitor = androidSerialMonitor;
+        watcher = new DeviceWatcher(this, handler);
+        serialSection = true;
+
+        setUpFrame();
+    }
+    
 
     public void choose() {
 
@@ -60,9 +75,13 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
         return lastDevice;
     }
 
+    public String getSelectedDevice(){
+        return selectedDevice;
+    }
+
     public synchronized void loadList(){
 
-        ArrayList<String> devices = handler.getDevices();
+        ArrayList<String> devices = handler.getDevices();       
 
         //Fill List
         DefaultListModel<String> listModel = (DefaultListModel<String>) deviceList.getModel();
@@ -91,12 +110,18 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
         okButton = new JButton();
         okButton.setText("Ok");
         okButton.setActionCommand("OK");
-        okButton.addActionListener(this);
 
         cancelButton = new JButton();
         cancelButton.setText("Cancel");
         cancelButton.setActionCommand("CANCEL");
-        cancelButton.addActionListener(this);
+
+        if (serialSection){
+            okButton.addActionListener(androidSerialMonitor);
+            cancelButton.addActionListener(androidSerialMonitor);
+        } else {
+            okButton.addActionListener(this);
+            cancelButton.addActionListener(this);
+        }
 
         buttonPanel.add(okButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(10,0)));
@@ -108,6 +133,7 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
 
         setDefaultDevice = new JCheckBox();
         setDefaultDevice.setText("Set as default device");
+        setDefaultDevice.setVisible(!serialSection);
 
         bottomPanel.add(setDefaultDevice, BorderLayout.WEST);
         bottomPanel.add(Box.createRigidArea(new Dimension(5,0)), BorderLayout.CENTER);
@@ -126,7 +152,6 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
         this.setExtendedState(JFrame.NORMAL);
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
-    
         this.addWindowListener(this);
     }
 
@@ -163,15 +188,18 @@ public class DeviceSelector extends JFrame implements ListSelectionListener, Act
                 handler.copyHexToDevice(selectedDevice);               
 
                 lastDevice = new String(selectedDevice);
-    
+        
                 //Close JFrame
                 closeFrame();
             }
             else {
                 System.out.println("Select a device");
             }
-
         }
+    }
+
+    public void closeFrameFromOutside(){
+        closeFrame();
     }
 
     private void closeFrame(){
