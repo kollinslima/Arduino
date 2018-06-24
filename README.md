@@ -1,9 +1,9 @@
 
-__This is a modified version of Arduino IDE, developed to be used with [SOFIA](https://github.com/kollinslima/ArduinoSimulator) simulator. You can get the official version of Arduino IDE [here](https://github.com/arduino/Arduino).__
+__This is a modified version of Arduino IDE, developed to be used with [SOFIA](https://github.com/kollinslima/ArduinoSimulator), an Android™ based Arduino simulator. You can get the official version of Arduino IDE [here](https://github.com/arduino/Arduino).__
 
 Modifications by: Kollins Gabriel Lima (kollins.lima@gmail.com) - 2018
 
-__Note:__ The Android™ robot is reproduced or modified from work created and shared by Google and is used in accordance with the terms described in the Creative Commons Attribution 3.0 License .
+__Note:__ The Android robot is reproduced or modified from work created and shared by Google and is used in accordance with the terms described in the Creative Commons Attribution 3.0 License .
 
 __Note:__ Android is a trademark of Google LLC.
 
