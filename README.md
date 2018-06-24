@@ -3,6 +3,7 @@ __This is a modified version of Arduino IDE, developed to be used with [SOFIA](h
 
 Modifications by: Kollins Gabriel Lima (kollins.lima@gmail.com) - 2018
 
+__Note:__ The Android robot is reproduced or modified from work created and shared by Google and is used in accordance with the terms described in the Creative Commons Attribution 3.0 License .
 
 
 Arduino
