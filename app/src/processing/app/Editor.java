@@ -2465,11 +2465,12 @@ public class Editor extends JFrame implements RunnerListener {
       }
 
       try {
-        serialMonitor.setVisible(true);
         if (!avoidMultipleOperations) {
           serialMonitor.open();
         }
+        serialMonitor.setVisible(true);
         success = true;
+        statusEmpty();
       } catch (ConnectException e) {
         statusError(tr("Unable to connect: is the sketch using the bridge?"));
       } catch (JSchException e) {
@@ -2479,6 +2480,7 @@ public class Editor extends JFrame implements RunnerListener {
         if (e.getCause() != null && e.getCause() instanceof SerialPortException) {
           errorMessage += " (" + ((SerialPortException) e.getCause()).getExceptionType() + ")";
         }
+        serialMonitor = null;
         statusError(errorMessage);
         try {
           serialMonitor.close();
@@ -2488,12 +2490,12 @@ public class Editor extends JFrame implements RunnerListener {
       } catch (Exception e) {
         statusError(e);
       } finally {
-        if (serialMonitor.requiresAuthorization() && !success) {
+        if (serialMonitor != null && serialMonitor.requiresAuthorization() && !success) {
           PreferencesData.remove(serialMonitor.getAuthorizationKey());
         }
       }
 
-    } while (serialMonitor.requiresAuthorization() && !success);
+    } while (serialMonitor != null && serialMonitor.requiresAuthorization() && !success);
 
   }
 
@@ -2517,6 +2519,7 @@ public class Editor extends JFrame implements RunnerListener {
       if (serialPlotter.isClosed()) {
         // If it's closed, clear the refrence to the existing
         // plotter and create a new one
+        serialPlotter.dispose();
         serialPlotter = null;
       }
       else {
@@ -2570,6 +2573,7 @@ public class Editor extends JFrame implements RunnerListener {
         serialPlotter.open();
         serialPlotter.setVisible(true);
         success = true;
+        statusEmpty();
       } catch (ConnectException e) {
         statusError(tr("Unable to connect: is the sketch using the bridge?"));
       } catch (JSchException e) {
@@ -2580,15 +2584,16 @@ public class Editor extends JFrame implements RunnerListener {
           errorMessage += " (" + ((SerialPortException) e.getCause()).getExceptionType() + ")";
         }
         statusError(errorMessage);
+        serialPlotter = null;
       } catch (Exception e) {
         statusError(e);
       } finally {
-        if (serialPlotter.requiresAuthorization() && !success) {
+        if (serialPlotter != null && serialPlotter.requiresAuthorization() && !success) {
           PreferencesData.remove(serialPlotter.getAuthorizationKey());
         }
       }
 
-    } while (serialPlotter.requiresAuthorization() && !success);
+    } while (serialPlotter != null && serialPlotter.requiresAuthorization() && !success);
 
   }
 
