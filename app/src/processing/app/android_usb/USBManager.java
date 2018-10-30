@@ -86,6 +86,7 @@ public class USBManager implements USBHandler {
         }
 
         // Extract device info
+        /*
         Pattern extractData = Pattern.compile("[0-9][0-9][0-9].*[0-9][0-9][0-9]");
         for (String rawDevice : rawDevices) {
             Matcher matcher = extractData.matcher(rawDevice);
@@ -122,6 +123,8 @@ public class USBManager implements USBHandler {
         }
 
         return friendlyDevices;
+        */
+        return rawDevices;
 
     }
 
@@ -170,11 +173,10 @@ public class USBManager implements USBHandler {
     }
 
     @Override
-    public int copyHexToDevice(String friendlyDevice) {
+    public int copyHexToDevice(String device) {
 
         //Get directory of selected device
-        Path devicePath = Paths.get(pathToDevices + "/" +
-                rawDevices.get(friendlyDevices.indexOf(friendlyDevice)));
+        Path devicePath = Paths.get(pathToDevices + "/" + device);
         //System.out.println(devicePath.toString());
 
         //Find hexFile in system
@@ -189,7 +191,7 @@ public class USBManager implements USBHandler {
 
         System.out.println("Copying...");
         System.out.println("Source: " + sourcePath);
-        System.out.println("Target: " + friendlyDevice);
+        System.out.println("Target: " + device);
 
         //Find target directory
         File directories = new File(devicePath.toString());
